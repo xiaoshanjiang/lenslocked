@@ -6,9 +6,9 @@ services:
     image: postgres # The postgres image will be used
     restart: always # Always try to restart if this stops running
     environment: # Provide environment variables
-      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER} # POSTGRES_USER env var w/ value baloo
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD}
-      POSTGRES_DB:  ${POSTGRES_DB:?POSTGRES_DB}  # Database name
+      POSTGRES_USER: baloo # ${POSTGRES_USER:?POSTGRES_USER} # POSTGRES_USER env var w/ value baloo
+      POSTGRES_PASSWORD: junglebook # ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD}
+      POSTGRES_DB:  lenslocked # ${POSTGRES_DB:?POSTGRES_DB}  # Database name
     ports: # Expose ports so that apps not running via docker-compose can connect to them.
       - 5432:5432 # format here is "port on our machine":"port on container"
 
