@@ -43,14 +43,21 @@ func (ss *SessionService) Create(userID int) (*Session, error) {
 	}
 	token, err := rand.String(bytesPerToken)
 	if err != nil {
-		return nil, fmt.Errorf("create %w", err)
+		return nil, fmt.Errorf("create: %w", err)
 	}
 	session := Session{
 		UserID:    userID,
 		Token:     token,
 		TokenHash: ss.hash(token),
 	}
-	// TODO: Store the session in our DB
+	row := ss.DB.QueryRow(`
+		INSERT INTO sessions (user_id, token_hash)
+		VALUES ($1, $2)
+		RETURNING id;`, session.UserID, session.TokenHash)
+	err = row.Scan(&session.ID)
+	if err != nil {
+		return nil, fmt.Errorf("create: %w", err)
+	}
 	return &session, nil
 }
 
