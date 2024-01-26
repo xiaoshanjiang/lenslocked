@@ -2,6 +2,9 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
+
+	"github.com/xiaoshanjiang/lenslocked/rand"
 )
 
 type Session struct {
@@ -22,9 +25,17 @@ type SessionService struct {
 // will be returned as the Token field on the Session type, but only the hashed
 // session token is stored in the database.
 func (ss *SessionService) Create(userID int) (*Session, error) {
-	// TODO: Create the session token
-	// TODO: Implement SessionService.Create
-	return nil, nil
+	token, err := rand.SessionToken()
+	if err != nil {
+		return nil, fmt.Errorf("create %w", err)
+	}
+	// TODO: Hash the session token
+	session := Session{
+		UserID: userID,
+		Token:  token,
+		// TODO: Store the session in our DB
+	}
+	return &session, nil
 }
 
 func (ss *SessionService) User(token string) (*User, error) {
