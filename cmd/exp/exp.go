@@ -1,9 +1,9 @@
 package main
 
 import (
-	"os"
+	"fmt"
 
-	"github.com/go-mail/mail/v2"
+	"github.com/xiaoshanjiang/lenslocked/models"
 )
 
 const (
@@ -14,23 +14,26 @@ const (
 )
 
 func main() {
-	from := "test@lenslocked.com"
-	to := "jon@calhoun.io"
-	subject := "This is a test email"
-	plaintext := "This is the body of the email"
-	html := `<h1>Hello there buddy!</h1><p>This is the email</p><p>Hope you enjoy it</p>`
-
-	msg := mail.NewMessage()
-	msg.SetHeader("To", to)
-	msg.SetHeader("From", from)
-	msg.SetHeader("Subject", subject)
-	msg.SetBody("text/plain", plaintext)
-	msg.AddAlternative("text/html", html)
-	msg.WriteTo(os.Stdout)
-
-	dialer := mail.NewDialer(host, port, username, password)
-	err := dialer.DialAndSend(msg)
+	email := models.Email{
+		// Comment this out to test the default sender logic we added.
+		From:    "test@lenslocked.com",
+		To:      "jon@calhoun.io",
+		Subject: "This is a test email",
+		// Try sending emails with only one of these two fields set.
+		Plaintext: "This is the body of the email",
+		HTML:      `<h1>Hello there buddy!</h1><p>This is the email</p><p>Hope you enjoy it</p>`,
+	}
+	es := models.NewEmailService(models.SMTPConfig{
+		Host:     host,
+		Port:     port,
+		Username: username,
+		Password: password,
+	})
+	// Uncomment this to test the default sender logic we added.
+	// es.DefaultSender = "bob@calhoun.io"
+	err := es.Send(email)
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("Email sent")
 }
