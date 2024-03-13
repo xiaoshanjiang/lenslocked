@@ -242,4 +242,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Images directory in development
+images/
+
 # End of https://www.toptal.com/developers/gitignore/api/go,macos,windows,linux,node
