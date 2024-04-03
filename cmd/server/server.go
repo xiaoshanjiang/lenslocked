@@ -28,41 +28,43 @@ type config struct {
 	}
 }
 
-func loadEnvConfig() (*config, error) {
+func loadEnvConfig() (config, error) {
 	var cfg config
 	err := godotenv.Load()
 	if err != nil {
-		return nil, err
+		return cfg, err
 	}
 	// Read the PSQL values from an ENV variable
-	cfg.PSQL.Host = os.Getenv("PSQL_HOST")
-	cfg.PSQL.Port = os.Getenv("PSQL_PORT")
-	cfg.PSQL.User = os.Getenv("PSQL_USER")
-	cfg.PSQL.Password = os.Getenv("PSQL_PASSWORD")
-	cfg.PSQL.Database = os.Getenv("PSQL_DATABASE")
-	cfg.PSQL.SSLMode = os.Getenv("PSQL_SSL_MODE")
+	cfg.PSQL = models.PostgresConfig{
+		Host:     os.Getenv("PSQL_HOST"),
+		Port:     os.Getenv("PSQL_PORT"),
+		User:     os.Getenv("PSQL_USER"),
+		Password: os.Getenv("PSQL_PASSWORD"),
+		Database: os.Getenv("PSQL_DATABASE"),
+		SSLMode:  os.Getenv("PSQL_SSLMODE"),
+	}
+	if cfg.PSQL.Host == "" && cfg.PSQL.Port == "" {
+		return cfg, fmt.Errorf("no PSQL config provided")
+	}
 
 	// Read the SMTP values from an ENV variable
 	cfg.SMTP.Host = os.Getenv("SMTP_HOST")
 	portStr := os.Getenv("SMTP_PORT")
 	cfg.SMTP.Port, err = strconv.Atoi(portStr)
 	if err != nil {
-		return nil, err
+		return cfg, err
 	}
 	cfg.SMTP.Username = os.Getenv("SMTP_USERNAME")
 	cfg.SMTP.Password = os.Getenv("SMTP_PASSWORD")
 
-	// TODO: Read the CSRF values from an ENV variable
+	// Read the CSRF values from an ENV variable
 	cfg.CSRF.Key = os.Getenv("CSRF_KEY")
-	cfg.CSRF.Secure, err = strconv.ParseBool(os.Getenv("CSRF_SECURE"))
-	if err != nil {
-		return nil, err
-	}
+	cfg.CSRF.Secure = os.Getenv("CSRF_SECURE") == "true"
 
 	//Read the server values from an ENV variable
 	cfg.Server.Address = os.Getenv("SERVER_ADDRESS")
 
-	return &cfg, nil
+	return cfg, nil
 }
 
 func main() {
