@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     restart: always
     volumes:
-      - ./images:/app/images
+        - ./images:/app/images
     # THIS is for testing purposes.
     # TODO: Remove before deploying
     ports:
