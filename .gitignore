@@ -245,4 +245,7 @@ $RECYCLE.BIN/
 # Images directory in development
 images/
 
+# Node stuff
+node_modules/
+
 # End of https://www.toptal.com/developers/gitignore/api/go,macos,windows,linux,node
